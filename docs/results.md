@@ -1,4 +1,7 @@
-# Results, first complete run
+# Results — four-class scheme (reported result)
+
+This is the primary result. See `docs/scheme_comparison.md` for the
+three-class sensitivity test and the argument for keeping four classes.
 
 District area recovered from the clip geometry: **1,735 km²** (published extent
 ~1,772 km², so the mask is within 2%).
@@ -100,9 +103,12 @@ is robust. The exact magnitudes are not.
 
 In order of how much they would change the answer:
 
-1. **Merge bare land into a single non-vegetated class, or drop it.** With four
-   classes where one is unstable, roughly a third of modelled transitions are
-   noise. Three stable classes would very likely raise the Figure of Merit.
+1. **Stabilise the bare-land class at source rather than merging it away.**
+   Merging was tested and does raise the Figure of Merit (see
+   `docs/scheme_comparison.md`), but four classes is the reported scheme, so the
+   fix has to come from the classification: same-season composites, and training
+   points that separate dry bare soil from concrete more deliberately. Until
+   then the instability stands as a stated limitation.
 2. **Fix composite seasonality.** Restrict every year's composite to the same
    months (a dry-season window) so water extent and crop phenology are
    comparable across dates.

@@ -100,12 +100,16 @@ variable so every module agrees on one of them:
 - **three** - bare land merged into built-up as one non-vegetated class.
   Outputs to `outputs_3class/`.
 
-**The three-class scheme is the recommended primary result.** Bare land changes
-class in 58-82% of its pixels each decade, which is Landsat confusing dry soil
-with concrete rather than real land change, and that churn enters the Markov
-matrix as if it were conversion. Merging improved every validation metric, cut
-wrong hits by roughly three quarters, and dropped quantity disagreement to
-0.004. See `docs/scheme_comparison.md` for the full table.
+**Four classes is the reported result; three is the sensitivity test.** Bare
+land is kept because it is a real and planning-relevant category in a peri-urban
+district and because its carbon density genuinely differs from built-up.
+
+That choice has a measurable cost and the cost is disclosed rather than hidden:
+bare land changes class in 58-82% of its pixels each decade, which is Landsat
+confusing dry soil with concrete rather than land change. Merging it away raises
+the Figure of Merit from 0.266 to 0.286 and cuts wrong hits by three quarters.
+`docs/scheme_comparison.md` carries the full table and the argument on both
+sides.
 
 ## Running
 

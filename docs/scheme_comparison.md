@@ -1,8 +1,9 @@
-# Four classes or three: which scheme to report
+# Four classes or three: sensitivity analysis
 
 Both runs are kept. `outputs/` is the four-class scheme as originally
-classified; `outputs_3class/` merges bare land into built-up as a single
-non-vegetated class. Select with `LULC_SCHEME=three`.
+classified and is **the reported result**; `outputs_3class/` merges bare land
+into built-up as a single non-vegetated class and serves as **a sensitivity
+test**. Select the latter with `LULC_SCHEME=three`.
 
 ## Why the question arises
 
@@ -52,16 +53,39 @@ problem. It did not fix the tendency to allocate too much change, which comes
 from the Markov matrix carrying every remaining source of inter-epoch
 inconsistency, including the seasonal water and vegetation instability.
 
-## Recommendation
+## Decision: four classes is the reported result
 
-**Report the three-class scheme as the primary result and keep the four-class
-run as a sensitivity test.** The argument to write is that bare land could not
-be separated from built-up with sufficient temporal stability at 30 m, that
-retaining it injected classification noise into the transition matrix, and that
-merging improved every validation metric — with the table above as evidence.
+**The four-class scheme is the primary result. The three-class run is retained
+as a sensitivity test.**
 
-That is a stronger position than reporting four classes and hoping nobody asks
-why bare land oscillates.
+The metrics above favour three classes, so this choice has to be argued rather
+than assumed. The arguments for keeping four:
+
+- **Bare land is a real category in a peri-urban district.** Vacant plots held
+  for speculation, brick-kiln land, and abandoned agricultural land are
+  planning-relevant and physically distinct from built structures. Merging them
+  into "built-up" erases a category that a land-use thesis may legitimately need
+  to discuss.
+- **The carbon densities genuinely differ.** Built-up carries 25.0 Mg C/ha
+  against bare land's 15.4. Merging assigns former bare pixels the denser
+  blended value, which overstates their carbon. The three-class 1993 stock is
+  7.23M Mg C against the four-class 7.13M for that reason alone.
+- **Comparability.** Four-class schemes (built-up / vegetation / water / bare)
+  are the convention in published Pakistani LULC work, and an InVEST carbon
+  workflow expects distinct land-use categories.
+
+**What this costs, and what must therefore be disclosed.** Retaining bare land
+means retaining its instability: 58 to 82% of bare-land pixels change class each
+decade, which is spectral confusion with built-up rather than land change.
+Figure of Merit falls from 0.286 to 0.266 predicting 2023, overall accuracy from
+0.714 to 0.638, and wrong hits rise from 20,323 to 91,968.
+
+The defensible way to write this is to report the four-class result, state the
+bare-land instability as a known limitation with the numbers above, and cite
+this comparison as the sensitivity analysis showing how much it costs. That is
+honest. Reporting four classes without acknowledging the instability is not,
+because the first examiner to plot bare-land area across the four epochs will
+see it oscillate.
 
 ## One caution on comparing carbon between schemes
 
