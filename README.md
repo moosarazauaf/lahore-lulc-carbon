@@ -52,8 +52,8 @@ produce a projection if the model cannot beat that null.
 closed-forest value. Lahore District's vegetation class is dominated by
 irrigated rice-wheat cropland, which is harvested annually and stores very
 little standing biomass. Since vegetation-to-built-up is the dominant
-transition, the forest value inflates the reported carbon loss roughly
-threefold. `src/config.py` carries corrected pool values with uncertainty
+transition, the forest value inflates the reported carbon loss. Measured on the
+actual maps, it overstates the 1993-2023 loss by a factor of 5.9. `src/config.py` carries corrected pool values with uncertainty
 ranges, and the pipeline reports the original table alongside so the size of the
 correction is explicit rather than silent.
 
