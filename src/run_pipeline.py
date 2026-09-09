@@ -169,12 +169,12 @@ def main():
                                           projected=y not in OBSERVED_YEARS)))
     for a, b in ((1993, 2023), (2023, 2043)):
         print("  " + str(carto.builtup_expansion_map(all_maps[a], all_maps[b],
-                                                     mask, profile, a, b)))
+                                                     mask, profile, a, b, area=area)))
     cvmax = max(float(np.nanmax(carbon.density_map(all_maps[y], mask)))
                 for y in all_years)
     for y in (all_years[0], 2023, all_years[-1]):
         print("  " + str(carto.carbon_map(carbon.density_map(all_maps[y], mask),
-                                          mask, profile, y, vmax=cvmax)))
+                                          mask, profile, y, vmax=cvmax, area=area)))
     print("  " + str(figures.area_trajectory(areas, 2023)))
     print("  " + str(figures.carbon_trajectory(bounds, 2023, legacy)))
 

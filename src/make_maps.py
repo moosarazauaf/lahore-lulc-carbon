@@ -55,13 +55,13 @@ def main():
     for a, b in ((1993, 2023), (2023, 2043)):
         if a in maps and b in maps:
             print("  " + str(carto.builtup_expansion_map(
-                maps[a], maps[b], mask, profile, a, b)))
+                maps[a], maps[b], mask, profile, a, b, area=area)))
 
     vmax = max(float(np.nanmax(carbon.density_map(maps[y], mask)))
                for y in years)
     for y in (OBSERVED_YEARS[0], OBSERVED_YEARS[-1], years[-1]):
         dens = carbon.density_map(maps[y], mask)
-        print("  " + str(carto.carbon_map(dens, mask, profile, y, vmax=vmax)))
+        print("  " + str(carto.carbon_map(dens, mask, profile, y, vmax=vmax, area=area)))
 
     print(f"\n  all written to {FIG_DIR}")
 

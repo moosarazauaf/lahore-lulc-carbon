@@ -86,6 +86,13 @@ Map figures are publication-ready rather than plain rasters: neatline,
 latitude/longitude graticule, segmented scale bar, north arrow, locator inset,
 panel letters, and a caption stating the CRS, cell size and data source.
 
+**Nothing is drawn on top of the map.** Legend, inset, scale bar and north arrow
+occupy margins created by the figure grid: a furniture column to the right and a
+scale strip beneath. Floating them over the data in boxes covers something in
+every panel, and which thing changes between epochs. The scale strip shares its
+x-limits with the map axis, so the bar's length is exact in degrees rather than
+inferred from figure geometry.
+
 One detail worth knowing if you regenerate them. The rasters are geographic
 (EPSG:4326), so plotting degrees on a square grid stretches the district
 east-west by about 17% at Lahore's latitude. Every axis sets an aspect of
