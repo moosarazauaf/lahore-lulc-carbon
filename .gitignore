@@ -6,3 +6,8 @@ data/drivers/*.tif
 outputs/maps/*.tif
 .DS_Store
 outputs_3class/maps/*.tif
+
+# The manuscript draft is deliberately NOT published here. It contains an
+# unreviewed draft with placeholder co-author details, and it is kept local
+# until it has been through supervisor review and journal submission.
+paper/
