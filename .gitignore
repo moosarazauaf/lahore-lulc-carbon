@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+data/lulc/*.tif
+data/drivers/*.tif
+outputs/maps/*.tif
+.DS_Store
