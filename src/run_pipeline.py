@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 import numpy as np
 
 import carbon
+import cartography as carto
 import figures
 import markov
 import rasters
@@ -160,7 +161,20 @@ def main():
                       profile, dtype="float32", nodata=-9999)
 
     header("6. FIGURES")
-    print("  " + str(figures.lulc_panel(all_maps, mask)))
+    print("  " + str(carto.lulc_panel(all_maps, mask, profile, area=area,
+                                      observed=OBSERVED_YEARS)))
+    for y in all_years:
+        print("  " + str(carto.single_map(all_maps[y], mask, profile, y,
+                                          area=area,
+                                          projected=y not in OBSERVED_YEARS)))
+    for a, b in ((1993, 2023), (2023, 2043)):
+        print("  " + str(carto.builtup_expansion_map(all_maps[a], all_maps[b],
+                                                     mask, profile, a, b)))
+    cvmax = max(float(np.nanmax(carbon.density_map(all_maps[y], mask)))
+                for y in all_years)
+    for y in (all_years[0], 2023, all_years[-1]):
+        print("  " + str(carto.carbon_map(carbon.density_map(all_maps[y], mask),
+                                          mask, profile, y, vmax=cvmax)))
     print("  " + str(figures.area_trajectory(areas, 2023)))
     print("  " + str(figures.carbon_trajectory(bounds, 2023, legacy)))
 

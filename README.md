@@ -80,10 +80,37 @@ also what the Markov step consumes.
 - **Carbon densities are Tier 1 placeholders** pending citation against the IPCC
   guidelines and Pakistani literature. See `docs/carbon_sources.md`.
 
+## Figures
+
+Map figures are publication-ready rather than plain rasters: neatline,
+latitude/longitude graticule, segmented scale bar, north arrow, locator inset,
+panel letters, and a caption stating the CRS, cell size and data source.
+
+One detail worth knowing if you regenerate them. The rasters are geographic
+(EPSG:4326), so plotting degrees on a square grid stretches the district
+east-west by about 17% at Lahore's latitude. Every axis sets an aspect of
+1/cos(latitude) so the shape is true. A map drawn without that correction is
+subtly the wrong shape, which is the sort of thing an examiner notices without
+being able to say why.
+
+Produced per run:
+
+- `lulc_panel.png` — all six epochs, panels (a) to (f), projected ones labelled
+- `lulc_<year>.png` — each epoch full page, with class areas and percentages
+- `builtup_expansion_<y0>_<y1>.png` — persistent, new and lost built-up
+- `carbon_density_<year>.png` — carbon surface, colourbar ticked at the four
+  values that actually occur, since density is assigned per class
+
+Regenerate the maps alone, without re-running the model:
+
+```bash
+.venv/Scripts/python.exe src/make_maps.py
+```
+
 ## Layout
 
 ```
-src/       pipeline modules
+src/       pipeline modules (cartography.py holds the map figures)
 gee/       corrected Earth Engine script
 data/lulc/ the four exported class maps (not committed; see below)
 outputs/   maps, figures, tables, summary.json
