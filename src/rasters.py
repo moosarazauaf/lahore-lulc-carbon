@@ -13,7 +13,7 @@ from scipy import ndimage
 from rasterio.enums import Resampling
 from rasterio.warp import reproject
 
-from config import CLASS_IDS, LULC_FILES, NODATA
+from config import LULC_FILES, MERGE, NODATA, RAW_CLASS_IDS, SCHEME
 
 
 class GridMismatch(RuntimeError):
@@ -75,7 +75,7 @@ def load_all(years) -> tuple[dict[int, np.ndarray], dict, np.ndarray]:
     for y in years:
         arr = ref_arr if y == ref_year else _align_to(LULC_FILES[y], profile)
         arr = arr.astype("uint8", copy=True)
-        legal = np.isin(arr, CLASS_IDS)
+        legal = np.isin(arr, RAW_CLASS_IDS)
         if not legal.all():
             notes.append(f"{y}: {int((~legal).sum()):,} pixels outside class range")
         arr[~legal] = NODATA
@@ -85,6 +85,9 @@ def load_all(years) -> tuple[dict[int, np.ndarray], dict, np.ndarray]:
     for arr in maps.values():
         valid &= arr != NODATA
 
+    # The mask must be derived from the RAW codes. Merging bare land into
+    # built-up first would add class-0 pixels along the district edge and let
+    # the flood fill leak inward, eroding the boundary.
     inside = district_mask(maps)
     dropped = int((valid & ~inside).sum())
     valid &= inside
@@ -92,6 +95,15 @@ def load_all(years) -> tuple[dict[int, np.ndarray], dict, np.ndarray]:
         arr[~valid] = NODATA
     print(f"  district mask: excluded {dropped:,} pixels written as class 0 "
           f"outside the clip geometry")
+
+    if MERGE:
+        moved = 0
+        for arr in maps.values():
+            for src, dst in MERGE.items():
+                sel = arr == src
+                moved += int(sel.sum())
+                arr[sel] = dst
+        print(f"  scheme '{SCHEME}': merged {moved:,} pixels via {MERGE}")
 
     if valid.sum() == 0:
         raise GridMismatch("no pixel is valid in all years; check exports share an extent")

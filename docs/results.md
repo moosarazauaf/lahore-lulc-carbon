@@ -32,7 +32,7 @@ prediction that planning will slow expansion.
 | Test | Overall acc. | Null (persistence) | Kappa | **Figure of Merit** | Null FoM |
 |---|---|---|---|---|---|
 | calibrated 1993–2003, predicted 2013 | 0.718 | 0.771 | 0.429 | **0.215** | 0.000 |
-| calibrated 2003–2013, predicted 2023 | 0.638 | 0.778 | 0.266 | **0.266** | 0.000 |
+| calibrated 2003–2013, predicted 2023 | 0.638 | 0.778 | 0.344 | **0.266** | 0.000 |
 
 Figure of Merit of 0.22–0.27 sits at the upper end of the published CA-Markov
 range, which is usually quoted as roughly 0.05–0.25. The model clearly carries

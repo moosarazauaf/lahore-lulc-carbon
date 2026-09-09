@@ -5,3 +5,4 @@ data/lulc/*.tif
 data/drivers/*.tif
 outputs/maps/*.tif
 .DS_Store
+outputs_3class/maps/*.tif

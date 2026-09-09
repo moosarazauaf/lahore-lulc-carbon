@@ -1,0 +1,7 @@
+from,to,area_ha,delta_Mg_C
+Vegetation,Built-up / bare,22064.0,-598675.1
+Vegetation,Water,578.6,-26907.0
+Built-up / bare,Water,383.4,-7424.8
+Water,Built-up / bare,182.4,3533.2
+Water,Vegetation,897.6,41736.2
+Built-up / bare,Vegetation,7512.5,203841.2

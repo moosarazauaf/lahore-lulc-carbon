@@ -1,0 +1,164 @@
+
+==============================================================================
+1. LOADING CLASSIFIED MAPS
+==============================================================================
+  district mask: excluded 1,799,234 pixels written as class 0 outside the clip geometry
+  scheme 'three': merged 399,178 pixels via {3: 0}
+  common valid pixels: 2,260,171 of 4,059,405 (55.7%)
+  pixel area: 765.6-769.4 m2 (a 30 m nominal grid would be 900 m2)
+  district area: 1,735.0 km2
+
+==============================================================================
+2. OBSERVED AREA AND TRANSITIONS
+==============================================================================
+
+year    Built-up / bare    Vegetation         Water
+1993            48,988       116,495         8,019
+2003            51,217       119,517         2,768
+2013            70,181       101,224         2,097
+2023            82,857        88,787         1,859
+  (hectares)
+
+  TRANSITIONS 1993 -> 2003
+                 Built-up / bare    Vegetation         Water         total
+Built-up / bare          37,242        10,874           872        48,988
+Vegetation               11,771       104,097           628       116,495
+Water                     2,204         4,546         1,268         8,019
+total                    51,217       119,517         2,768       173,502
+(values in ha; rows = 'from', columns = 'to')
+
+  TRANSITIONS 2003 -> 2013
+                 Built-up / bare    Vegetation         Water         total
+Built-up / bare          43,648         6,984           585        51,217
+Vegetation               25,400        93,449           668       119,517
+Water                     1,134           791           843         2,768
+total                    70,181       101,224         2,097       173,502
+(values in ha; rows = 'from', columns = 'to')
+
+  TRANSITIONS 2013 -> 2023
+                 Built-up / bare    Vegetation         Water         total
+Built-up / bare          61,704         8,027           451        70,181
+Vegetation               20,244        80,269           711       101,224
+Water                       909           490           697         2,097
+total                    82,857        88,787         1,859       173,502
+(values in ha; rows = 'from', columns = 'to')
+
+==============================================================================
+3. BACK-VALIDATION (does the method work on a year we can check?)
+==============================================================================
+
+  calibrating transition potential on 1993 -> 2003
+  class 0: n=120,000  changed=23.87%  OOB=0.755
+  class 1: n=120,000  changed=10.65%  OOB=0.810
+  class 2: n=104,507  changed=84.18%  OOB=0.742
+  simulating 2003 -> 2013
+
+  VALIDATION - calibrated 1993-2003, predicted 2013
+    overall accuracy       0.738   (null / persistence:  0.795)
+    kappa                  0.451   (null:  0.572)
+    FIGURE OF MERIT        0.252   (null: 0.000)
+      hits 199,751  misses 243,811  false alarms 328,286  wrong hits 19,621
+    observed change        35,563 ha
+    simulated change       42,043 ha
+    quantity disagreement  0.107 | allocation disagreement  0.155
+
+class            observed ha  simulated ha   error %
+Built-up / bare        70,181        51,775    -26.23
+Vegetation           101,224       119,734     18.29
+Water                  2,097         1,993     -4.94
+
+  calibrating transition potential on 2003 -> 2013
+  class 0: n=120,000  changed=14.75%  OOB=0.761
+  class 1: n=120,000  changed=21.73%  OOB=0.759
+  class 2: n=36,077  changed=69.55%  OOB=0.750
+  simulating 2013 -> 2023
+
+  VALIDATION - calibrated 2003-2013, predicted 2023
+    overall accuracy       0.714   (null / persistence:  0.822)
+    kappa                  0.439   (null:  0.650)
+    FIGURE OF MERIT        0.286   (null: 0.000)
+      hits 259,704  misses 121,552  false alarms 504,936  wrong hits 20,323
+    observed change        30,833 ha
+    simulated change       60,273 ha
+    quantity disagreement  0.004 | allocation disagreement  0.282
+
+class            observed ha  simulated ha   error %
+Built-up / bare        82,857        82,187     -0.81
+Vegetation            88,787        89,309      0.59
+Water                  1,859         2,006      7.94
+
+==============================================================================
+4. PROJECTION TO 2033 AND 2043
+==============================================================================
+  Calibrated on the most recent observed interval (2013 -> 2023).
+
+  calibrating transition potential on 2013 -> 2023
+  class 0: n=120,000  changed=12.11%  OOB=0.798
+  class 1: n=120,000  changed=20.74%  OOB=0.750
+  class 2: n=27,323  changed=66.75%  OOB=0.780
+  simulating 2023 -> 2033
+  simulating 2033 -> 2043
+
+  transition probability matrix, 2013 -> 2023 (per 10-year step)
+              Built-up / bare   Vegetation        Water
+Built-up / bare       0.8792       0.1144       0.0064
+Vegetation           0.1999       0.7930       0.0070
+Water                0.4337       0.2338       0.3325
+
+year    Built-up / bare    Vegetation         Water
+1993            48,988       116,495         8,019
+2003            51,217       119,517         2,768
+2013            70,181       101,224         2,097
+2023            82,857        88,787         1,859
+2033            91,417        80,311         1,774  (projected)
+2043            97,207        74,554         1,741  (projected)
+
+==============================================================================
+5. CARBON STOCK
+==============================================================================
+
+year                 low            best            high   original script
+1993           4,634,218       7,233,263      11,008,228        18,853,715
+2003           4,755,233       7,416,952      11,279,777        19,341,681
+2013           4,354,709       6,933,604      10,685,847        17,112,890
+2023           4,080,146       6,600,728      10,274,944        15,592,599
+2033           3,892,258       6,372,400       9,992,447        14,554,874
+2043           3,764,385       6,216,832       9,799,762        13,849,467
+  (Mg C)
+
+  1993-2023 carbon change, corrected table:         -632,534 Mg C
+  1993-2023 carbon change, original table:        -3,261,116 Mg C
+  the original table overstates the loss by a factor of 5.16
+
+  CARBON CHANGE BY TRANSITION, 1993 -> 2023
+from             to                    area ha      delta Mg C
+Vegetation       Built-up / bare        41,033      -1,113,370
+Vegetation       Water                     629         -29,232
+Built-up / bare  Water                     454          -8,790
+Water            Built-up / bare         3,350          64,868
+Water            Vegetation              3,893         181,028
+Built-up / bare  Vegetation             10,060         272,961
+NET                                                   -632,534
+
+  CARBON CHANGE BY TRANSITION, 2023 -> 2043
+from             to                    area ha      delta Mg C
+Vegetation       Built-up / bare        22,064        -598,675
+Vegetation       Water                     579         -26,907
+Built-up / bare  Water                     383          -7,425
+Water            Built-up / bare           182           3,533
+Water            Vegetation                898          41,736
+Built-up / bare  Vegetation              7,513         203,841
+NET                                                   -383,896
+
+==============================================================================
+6. FIGURES
+==============================================================================
+  C:\Users\Moosa\OneDrive\Desktop\lahore-lulc-carbon\outputs_3class\figures\lulc_panel.png
+  C:\Users\Moosa\OneDrive\Desktop\lahore-lulc-carbon\outputs_3class\figures\area_trajectory.png
+  C:\Users\Moosa\OneDrive\Desktop\lahore-lulc-carbon\outputs_3class\figures\carbon_trajectory.png
+
+  C:\Users\Moosa\OneDrive\Desktop\lahore-lulc-carbon\outputs_3class\summary.json
+
+==============================================================================
+DONE
+==============================================================================

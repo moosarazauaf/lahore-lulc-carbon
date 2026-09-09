@@ -90,10 +90,31 @@ outputs/   maps, figures, tables, summary.json
 docs/      method notes and carbon source tracking
 ```
 
+## Class schemes
+
+Two schemes are supported and both are kept, selected by an environment
+variable so every module agrees on one of them:
+
+- **four** (default) - Built-up / Vegetation / Water / Bare land, as classified.
+  Outputs to `outputs/`.
+- **three** - bare land merged into built-up as one non-vegetated class.
+  Outputs to `outputs_3class/`.
+
+**The three-class scheme is the recommended primary result.** Bare land changes
+class in 58-82% of its pixels each decade, which is Landsat confusing dry soil
+with concrete rather than real land change, and that churn enters the Markov
+matrix as if it were conversion. Merging improved every validation metric, cut
+wrong hits by roughly three quarters, and dropped quantity disagreement to
+0.004. See `docs/scheme_comparison.md` for the full table.
+
 ## Running
 
 ```bash
 .venv/Scripts/python.exe src/run_pipeline.py
+```
+
+```bash
+LULC_SCHEME=three .venv/Scripts/python.exe src/run_pipeline.py
 ```
 
 Input rasters are not committed (they are Earth Engine exports and belong in

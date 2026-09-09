@@ -64,9 +64,13 @@ def change_by_transition(t0, t1, mask, area, bound: str = "best") -> list[dict]:
 
 
 def format_transition_table(rows) -> str:
-    lines = [f"{'from':<14}{'to':<14}{'area ha':>12}{'delta Mg C':>16}"]
+    # Column width follows the longest class name; "Built-up / bare" overflows a
+    # fixed 14 and would run into the next column.
+    w = max([len(r[k]) for r in rows for k in ("from", "to")] + [4]) + 2
+    lines = [f"{'from':<{w}}{'to':<{w}}{'area ha':>12}{'delta Mg C':>16}"]
     for r in rows:
-        lines.append(f"{r['from']:<14}{r['to']:<14}{r['area_ha']:>12,.0f}{r['delta_Mg_C']:>16,.0f}")
+        lines.append(f"{r['from']:<{w}}{r['to']:<{w}}"
+                     f"{r['area_ha']:>12,.0f}{r['delta_Mg_C']:>16,.0f}")
     net = sum(r["delta_Mg_C"] for r in rows)
-    lines.append(f"{'NET':<28}{'':>12}{net:>16,.0f}")
+    lines.append(f"{'NET':<{2 * w}}{'':>12}{net:>16,.0f}")
     return "\n".join(lines)
