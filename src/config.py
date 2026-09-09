@@ -24,9 +24,14 @@ CLASS_IDS = sorted(CLASSES)
 N_CLASSES = len(CLASS_IDS)
 CLASS_COLOURS = {0: "#c0392b", 1: "#27ae60", 2: "#2874a6", 3: "#d4ac0d"}
 
-# Landsat native resolution; pixel area in hectares.
+# Nominal Landsat resolution, used only for distance drivers.
+#
+# Pixel AREA is deliberately not a constant. The Earth Engine exports are in
+# EPSG:4326, where a 0.000269 degree pixel at Lahore's latitude is about 29.9 m
+# tall but only 25.6 m wide - roughly 766 m2, not the 900 m2 a 30 m grid
+# suggests. Multiplying pixel counts by 0.09 ha overstates every area by 17%.
+# Real per-pixel areas are computed geodesically in rasters.pixel_area_ha().
 PIXEL_SIZE_M = 30.0
-PIXEL_AREA_HA = (PIXEL_SIZE_M ** 2) / 10_000.0
 
 # ------------------------------------------------------------- carbon densities
 # Mg C/ha, split into the four IPCC pools. Values are (low, best, high) so that

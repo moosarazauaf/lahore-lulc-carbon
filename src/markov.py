@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from config import CLASS_IDS, CLASSES, N_CLASSES, PIXEL_AREA_HA
+from config import CLASS_IDS, CLASSES, N_CLASSES
 
 
 def crosstab(a: np.ndarray, b: np.ndarray, mask: np.ndarray) -> np.ndarray:
@@ -30,9 +30,19 @@ def transition_probabilities(counts: np.ndarray) -> np.ndarray:
     return P
 
 
-def area_hectares(arr: np.ndarray, mask: np.ndarray) -> dict[int, float]:
-    counts = np.bincount(arr[mask].astype(int), minlength=N_CLASSES)
-    return {c: float(counts[c] * PIXEL_AREA_HA) for c in CLASS_IDS}
+def area_hectares(arr: np.ndarray, mask: np.ndarray, area: np.ndarray) -> dict[int, float]:
+    """Area per class, summing true per-pixel areas rather than a nominal constant."""
+    ha = np.bincount(arr[mask].astype(int), weights=area[mask], minlength=N_CLASSES)
+    return {c: float(ha[c]) for c in CLASS_IDS}
+
+
+def crosstab_area(a: np.ndarray, b: np.ndarray, mask: np.ndarray,
+                  area: np.ndarray) -> np.ndarray:
+    """From-to matrix in hectares."""
+    av, bv = a[mask].astype(int), b[mask].astype(int)
+    flat = np.bincount(av * N_CLASSES + bv, weights=area[mask],
+                       minlength=N_CLASSES ** 2)
+    return flat.reshape(N_CLASSES, N_CLASSES)
 
 
 def project_shares(shares: np.ndarray, P: np.ndarray, steps: int = 1) -> np.ndarray:
@@ -80,18 +90,17 @@ def annualise(P: np.ndarray, interval_years: int, step_years: int) -> np.ndarray
     return rooted
 
 
-def format_matrix(counts: np.ndarray, as_area: bool = True) -> str:
+def format_matrix(values: np.ndarray, unit: str = "ha") -> str:
     """Human-readable from-to table for the thesis appendix."""
-    scale = PIXEL_AREA_HA if as_area else 1.0
-    unit = "ha" if as_area else "px"
+    counts = values
     names = [CLASSES[c] for c in CLASS_IDS]
     w = max(len(n) for n in names) + 2
     head = " " * w + "".join(f"{n:>14}" for n in names) + f"{'total':>14}"
     lines = [head]
     for i, n in enumerate(names):
-        row = counts[i] * scale
+        row = counts[i]
         lines.append(f"{n:<{w}}" + "".join(f"{v:>14,.0f}" for v in row) + f"{row.sum():>14,.0f}")
-    tot = counts.sum(axis=0) * scale
+    tot = counts.sum(axis=0)
     lines.append(f"{'total':<{w}}" + "".join(f"{v:>14,.0f}" for v in tot) + f"{tot.sum():>14,.0f}")
     lines.append(f"(values in {unit}; rows = 'from', columns = 'to')")
     return "\n".join(lines)

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from config import CLASSES, CLASS_IDS, N_CLASSES, PIXEL_AREA_HA
+from config import CLASSES, CLASS_IDS, N_CLASSES
 
 
 def kappa(obs: np.ndarray, sim: np.ndarray) -> tuple[float, float]:
@@ -63,7 +63,7 @@ def disagreement(obs: np.ndarray, sim: np.ndarray) -> tuple[float, float]:
 
 
 def report(t0: np.ndarray, obs: np.ndarray, sim: np.ndarray, mask: np.ndarray,
-           label: str) -> dict:
+           area: np.ndarray, label: str) -> dict:
     a, b, c = t0[mask].astype(int), obs[mask].astype(int), sim[mask].astype(int)
 
     oa, k = kappa(b, c)
@@ -84,14 +84,18 @@ def report(t0: np.ndarray, obs: np.ndarray, sim: np.ndarray, mask: np.ndarray,
         **fom,
     }
 
-    print(f"\n  VALIDATION — {label}")
+    print(f"\n  VALIDATION - {label}")
     print(f"    overall accuracy      {oa:6.3f}   (null / persistence: {null_oa:6.3f})")
     print(f"    kappa                 {k:6.3f}   (null: {null_k:6.3f})")
     print(f"    FIGURE OF MERIT       {fom['figure_of_merit']:6.3f}   (null: {null_fom['figure_of_merit']:.3f})")
     print(f"      hits {fom['hits']:,}  misses {fom['misses']:,}  "
           f"false alarms {fom['false_alarms']:,}  wrong hits {fom['wrong_hits']:,}")
-    print(f"    observed change  {fom['observed_change_px'] * PIXEL_AREA_HA:>12,.0f} ha")
-    print(f"    simulated change {fom['simulated_change_px'] * PIXEL_AREA_HA:>12,.0f} ha")
+    am = area[mask]
+    obs_ha = float(am[b != a].sum())
+    sim_ha = float(am[c != a].sum())
+    res["observed_change_ha"], res["simulated_change_ha"] = obs_ha, sim_ha
+    print(f"    observed change  {obs_ha:>12,.0f} ha")
+    print(f"    simulated change {sim_ha:>12,.0f} ha")
     print(f"    quantity disagreement {q:6.3f} | allocation disagreement {al:6.3f}")
 
     if fom["figure_of_merit"] <= 0.0:
@@ -101,12 +105,13 @@ def report(t0: np.ndarray, obs: np.ndarray, sim: np.ndarray, mask: np.ndarray,
     return res
 
 
-def per_class_area_error(obs, sim, mask) -> str:
+def per_class_area_error(obs, sim, mask, area) -> str:
     lines = [f"{'class':<14}{'observed ha':>14}{'simulated ha':>14}{'error %':>10}"]
     b, c = obs[mask].astype(int), sim[mask].astype(int)
     for cid in CLASS_IDS:
-        o = float((b == cid).sum()) * PIXEL_AREA_HA
-        s = float((c == cid).sum()) * PIXEL_AREA_HA
+        am = area[mask]
+        o = float(am[b == cid].sum())
+        s = float(am[c == cid].sum())
         e = 100 * (s - o) / o if o else float("nan")
         lines.append(f"{CLASSES[cid]:<14}{o:>14,.0f}{s:>14,.0f}{e:>10.2f}")
     return "\n".join(lines)

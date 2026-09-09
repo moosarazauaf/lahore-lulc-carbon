@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import numpy as np
 import rasterio
+from scipy import ndimage
 from rasterio.enums import Resampling
 from rasterio.warp import reproject
 
@@ -84,6 +85,14 @@ def load_all(years) -> tuple[dict[int, np.ndarray], dict, np.ndarray]:
     for arr in maps.values():
         valid &= arr != NODATA
 
+    inside = district_mask(maps)
+    dropped = int((valid & ~inside).sum())
+    valid &= inside
+    for arr in maps.values():
+        arr[~valid] = NODATA
+    print(f"  district mask: excluded {dropped:,} pixels written as class 0 "
+          f"outside the clip geometry")
+
     if valid.sum() == 0:
         raise GridMismatch("no pixel is valid in all years; check exports share an extent")
 
@@ -92,6 +101,55 @@ def load_all(years) -> tuple[dict[int, np.ndarray], dict, np.ndarray]:
     print(f"  common valid pixels: {int(valid.sum()):,} of {valid.size:,} "
           f"({100 * valid.sum() / valid.size:.1f}%)")
     return maps, profile, valid
+
+
+def pixel_area_ha(profile) -> np.ndarray:
+    """Per-pixel area in hectares, computed geodesically.
+
+    The exports are geographic (EPSG:4326), so pixel width in metres shrinks
+    with latitude and a pixel is NOT (30 m)^2. Area of a graticule cell on a
+    sphere is R^2 * dlon * (sin(lat_top) - sin(lat_bottom)), which is exact
+    enough here and avoids reprojecting nominal class codes.
+    """
+    R = 6378137.0
+    T = profile["transform"]
+    h, w = profile["height"], profile["width"]
+    rows = np.arange(h)
+    lat_top = T.f
+    dlat, dlon = abs(T.e), abs(T.a)
+    p1 = np.radians(lat_top - rows * dlat)
+    p2 = np.radians(lat_top - (rows + 1) * dlat)
+    row_m2 = (R ** 2) * np.radians(dlon) * np.abs(np.sin(p1) - np.sin(p2))
+    return np.repeat((row_m2 / 10_000.0)[:, None], w, axis=1).astype("float64")
+
+
+def district_mask(maps: dict[int, np.ndarray]) -> np.ndarray:
+    """Recover the clip geometry that Earth Engine applied.
+
+    The exports carry no nodata value, so every pixel outside the district
+    polygon was written as 0 - which is the Built-up class code. Left alone this
+    labels roughly 44% of the raster as city and corrupts every area, carbon and
+    transition figure computed from these files.
+
+    The outside region is identifiable as the set of pixels that are class 0 in
+    EVERY year AND connect to the raster border. Genuine built-up that was
+    already urban in 1993 is also class 0 in every year, but the district's own
+    edges were rural in 1993, so it does not bridge to the border. The recovered
+    area is checked against the district's published extent by the caller.
+    """
+    zero_all = np.ones(next(iter(maps.values())).shape, dtype=bool)
+    for a in maps.values():
+        zero_all &= a == 0
+
+    labels, _ = ndimage.label(zero_all)
+    edge = set(labels[0, :]) | set(labels[-1, :]) | set(labels[:, 0]) | set(labels[:, -1])
+    edge.discard(0)
+    outside = np.isin(labels, sorted(edge))
+
+    inside = ~outside
+    # Close pinholes where a lone in-district pixel touched the outside region.
+    inside = ndimage.binary_fill_holes(inside)
+    return inside
 
 
 def write(path, array: np.ndarray, profile: dict, dtype: str = "uint8", nodata=NODATA):

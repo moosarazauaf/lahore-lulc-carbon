@@ -80,6 +80,7 @@ def area_trajectory(areas, last_observed, path=None):
     fig, ax = plt.subplots(figsize=(7.2, 4.4))
     ax.grid(axis="y", zorder=0)
 
+    ends = {}
     for cid in CLASS_IDS:
         vals = [areas[y][cid] for y in years]
         obs = [(y, v) for y, v in zip(years, vals) if y <= last_observed]
@@ -89,20 +90,37 @@ def area_trajectory(areas, last_observed, path=None):
         if len(prj) > 1:
             ax.plot(*zip(*prj), color=col, lw=2, ls=(0, (4, 3)), marker="o",
                     ms=5, mfc=SURFACE, zorder=3)
-        ax.annotate(CLASSES[cid], (years[-1], vals[-1]), xytext=(8, 0),
-                    textcoords="offset points", color=INK, va="center", fontsize=9)
+        ends[cid] = vals[-1]
+
+    # Push apart direct labels whose end values nearly coincide, so Water and
+    # Bare land stay readable instead of printing on top of one another.
+    span = max(ends.values()) - min(ends.values())
+    gap = span * 0.045
+    order = sorted(ends, key=lambda c: ends[c])
+    placed = {}
+    prev = -float("inf")
+    for cid in order:
+        y = max(ends[cid], prev + gap)
+        placed[cid] = y
+        prev = y
+    for cid in CLASS_IDS:
+        ax.annotate(CLASSES[cid], (years[-1] + 1.2, placed[cid]),
+                    color=INK, va="center", ha="left", fontsize=9,
+                    annotation_clip=False)
 
     ax.axvline(last_observed, color=INK_MUTED, lw=0.8, ls=":", zorder=1)
-    ax.annotate("observed  |  projected", (last_observed, ax.get_ylim()[1]),
-                xytext=(0, -12), textcoords="offset points", ha="center",
-                color=INK_MUTED, fontsize=8)
+    ax.annotate("observed", (last_observed, ax.get_ylim()[1]), xytext=(-6, -10),
+                textcoords="offset points", ha="right", color=INK_MUTED, fontsize=8)
+    ax.annotate("projected", (last_observed, ax.get_ylim()[1]), xytext=(6, -10),
+                textcoords="offset points", ha="left", color=INK_MUTED, fontsize=8)
     ax.set_ylabel("Area (hectares)")
     ax.set_xticks(years)
     ax.set_xlim(years[0] - 2, years[-1] + 9)
     ax.set_title("Land cover area, observed and projected", loc="left", color=INK)
     handles = [plt.Line2D([], [], color=CLASS_COLOURS[c], lw=2) for c in CLASS_IDS]
     ax.legend(handles, [CLASSES[c] for c in CLASS_IDS], frameon=False,
-              loc="upper left", ncol=2, fontsize=8)
+              loc="upper center", bbox_to_anchor=(0.42, -0.10),
+              ncol=len(CLASS_IDS), fontsize=8)
 
     _csv("area_trajectory.csv", ["year"] + [CLASSES[c] for c in CLASS_IDS],
          [[y] + [round(areas[y][c], 1) for c in CLASS_IDS] for y in years])

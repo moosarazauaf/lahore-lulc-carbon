@@ -98,3 +98,18 @@ docs/      method notes and carbon source tracking
 
 Input rasters are not committed (they are Earth Engine exports and belong in
 Drive). Place `Lahore_{1993,2003,2013,2023}_RF_LULC.tif` in `data/lulc/`.
+
+## Data hazard in the Earth Engine exports
+
+The exported GeoTIFFs carry no nodata value. Earth Engine writes masked pixels
+as 0, and 0 is the Built-up class code, so everything outside the district
+polygon reads as built-up city - 1.80 million pixels, 44% of each raster.
+
+Statistics printed inside Earth Engine are unaffected, because `reduceRegion`
+was bounded by `lahore.geometry()`. Anything computed from the exported files
+in QGIS, ArcGIS or InVEST is affected. `rasters.district_mask()` recovers the
+clip geometry; the fix at source is to set a real nodata value on export.
+
+The rasters are also in EPSG:4326, where a 0.000269 degree pixel at Lahore is
+about 766 m2, not the 900 m2 of a nominal 30 m grid. Counting pixels and
+multiplying by 0.09 ha overstates every area by 17%.

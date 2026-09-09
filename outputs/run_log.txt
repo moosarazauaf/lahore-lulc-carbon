@@ -1,0 +1,184 @@
+
+==============================================================================
+1. LOADING CLASSIFIED MAPS
+==============================================================================
+  district mask: excluded 1,799,234 pixels written as class 0 outside the clip geometry
+  common valid pixels: 2,260,171 of 4,059,405 (55.7%)
+  pixel area: 765.6-769.4 m2 (a 30 m nominal grid would be 900 m2)
+  district area: 1,735.0 km2
+
+==============================================================================
+2. OBSERVED AREA AND TRANSITIONS
+==============================================================================
+
+year          Built-up    Vegetation         Water     Bare land
+1993            35,485       116,495         8,019        13,503
+2003            48,341       119,517         2,768         2,876
+2013            61,382       101,224         2,097         8,799
+2023            77,371        88,787         1,859         5,486
+  (hectares)
+
+  TRANSITIONS 1993 -> 2003
+                  Built-up    Vegetation         Water     Bare land         total
+Built-up            26,540         7,869           823           254        35,485
+Vegetation          11,562       104,097           628           210       116,495
+Water                2,169         4,546         1,268            35         8,019
+Bare land            8,071         3,006            49         2,378        13,503
+total               48,341       119,517         2,768         2,876       173,502
+(values in ha; rows = 'from', columns = 'to')
+
+  TRANSITIONS 2003 -> 2013
+                  Built-up    Vegetation         Water     Bare land         total
+Built-up            38,286         6,714           557         2,784        48,341
+Vegetation          20,606        93,449           668         4,794       119,517
+Water                1,123           791           843            11         2,768
+Bare land            1,367           270            29         1,210         2,876
+total               61,382       101,224         2,097         8,799       173,502
+(values in ha; rows = 'from', columns = 'to')
+
+  TRANSITIONS 2013 -> 2023
+                  Built-up    Vegetation         Water     Bare land         total
+Built-up            51,986         7,478           444         1,474        61,382
+Vegetation          18,270        80,269           711         1,974       101,224
+Water                  898           490           697            11         2,097
+Bare land            6,217           549             6         2,027         8,799
+total               77,371        88,787         1,859         5,486       173,502
+(values in ha; rows = 'from', columns = 'to')
+
+==============================================================================
+3. BACK-VALIDATION (does the method work on a year we can check?)
+==============================================================================
+
+  calibrating transition potential on 1993 -> 2003
+  class 0: n=120,000  changed=25.29%  OOB=0.755
+  class 1: n=120,000  changed=10.62%  OOB=0.815
+  class 2: n=104,507  changed=84.18%  OOB=0.753
+  class 3: n=120,000  changed=82.47%  OOB=0.695
+  simulating 2003 -> 2013
+
+  VALIDATION - calibrated 1993-2003, predicted 2013
+    overall accuracy       0.718   (null / persistence:  0.771)
+    kappa                  0.429   (null:  0.541)
+    FIGURE OF MERIT        0.215   (null: 0.000)
+      hits 174,775  misses 277,082  false alarms 295,010  wrong hits 65,362
+    observed change        39,714 ha
+    simulated change       41,084 ha
+    quantity disagreement  0.107 | allocation disagreement  0.175
+
+class            observed ha  simulated ha   error %
+Built-up              61,382        50,487    -17.75
+Vegetation           101,224       119,722     18.27
+Water                  2,097         2,213      5.57
+Bare land              8,799         1,080    -87.73
+
+  calibrating transition potential on 2003 -> 2013
+  class 0: n=120,000  changed=20.72%  OOB=0.680
+  class 1: n=120,000  changed=21.73%  OOB=0.713
+  class 2: n=36,077  changed=69.55%  OOB=0.752
+  class 3: n=37,426  changed=57.91%  OOB=0.700
+  simulating 2013 -> 2023
+
+  VALIDATION - calibrated 2003-2013, predicted 2023
+    overall accuracy       0.638   (null / persistence:  0.778)
+    kappa                  0.344   (null:  0.590)
+    FIGURE OF MERIT        0.266   (null: 0.000)
+      hits 296,129  misses 113,596  false alarms 613,276  wrong hits 91,968
+    observed change        38,523 ha
+    simulated change       76,895 ha
+    quantity disagreement  0.036 | allocation disagreement  0.326
+
+class            observed ha  simulated ha   error %
+Built-up              77,371        71,100     -8.11
+Vegetation            88,787        89,095      0.35
+Water                  1,859         1,999      7.54
+Bare land              5,486        11,308    106.14
+
+==============================================================================
+4. PROJECTION TO 2033 AND 2043
+==============================================================================
+  Calibrated on the most recent observed interval (2013 -> 2023).
+
+  calibrating transition potential on 2013 -> 2023
+  class 0: n=120,000  changed=15.30%  OOB=0.742
+  class 1: n=120,000  changed=20.73%  OOB=0.718
+  class 2: n=27,323  changed=66.75%  OOB=0.763
+  class 3: n=114,558  changed=76.97%  OOB=0.739
+  simulating 2023 -> 2033
+  simulating 2033 -> 2043
+
+  transition probability matrix, 2013 -> 2023 (per 10-year step)
+                   Built-up   Vegetation        Water    Bare land
+Built-up             0.8470       0.1218       0.0072       0.0240
+Vegetation           0.1805       0.7930       0.0070       0.0195
+Water                0.4284       0.2338       0.3325       0.0052
+Bare land            0.7065       0.0624       0.0007       0.2303
+
+year          Built-up    Vegetation         Water     Bare land
+1993            35,485       116,495         8,019        13,503
+2003            48,341       119,517         2,768         2,876
+2013            61,382       101,224         2,097         8,799
+2023            77,371        88,787         1,859         5,486
+2033            86,225        80,608         1,806         4,864  (projected)
+2043            91,784        75,151         1,794         4,773  (projected)
+
+==============================================================================
+5. CARBON STOCK
+==============================================================================
+
+year                 low            best            high   original script
+1993           4,592,112       7,134,673      10,828,507        18,751,017
+2003           4,757,300       7,421,792      11,288,601        19,346,723
+2013           4,337,623       6,893,598      10,612,919        17,071,216
+2023           4,080,076       6,600,563      10,274,643        15,592,427
+2033           3,903,255       6,390,866      10,021,507        14,602,082
+2043           3,783,701       6,247,365       9,846,139        13,937,537
+  (Mg C)
+
+  1993-2023 carbon change, corrected table:         -534,110 Mg C
+  1993-2023 carbon change, original table:        -3,158,590 Mg C
+  the original table overstates the loss by a factor of 5.91
+
+  CARBON CHANGE BY TRANSITION, 1993 -> 2023
+from          to                 area ha      delta Mg C
+Vegetation    Built-up            37,381        -990,600
+Vegetation    Bare land            3,652        -131,828
+Vegetation    Water                  629         -29,232
+Built-up      Water                  430          -8,590
+Built-up      Bare land              787          -7,559
+Bare land     Water                   24            -253
+Water         Bare land               54             558
+Water         Built-up             3,296          65,918
+Bare land     Built-up             9,083          87,198
+Bare land     Vegetation           3,402         122,828
+Built-up      Vegetation           6,657         176,422
+Water         Vegetation           3,893         181,028
+NET                                             -534,110
+
+  CARBON CHANGE BY TRANSITION, 2023 -> 2043
+from          to                 area ha      delta Mg C
+Vegetation    Built-up            18,905        -500,975
+Vegetation    Bare land            3,075        -110,998
+Vegetation    Water                  501         -23,309
+Built-up      Water                  414          -8,277
+Built-up      Bare land              773          -7,416
+Bare land     Water                    0              -3
+Water         Bare land                9              94
+Water         Built-up               164           3,272
+Bare land     Built-up             3,564          34,213
+Bare land     Vegetation           1,005          36,288
+Water         Vegetation             807          37,544
+Built-up      Vegetation           7,033         186,370
+NET                                             -353,198
+
+==============================================================================
+6. FIGURES
+==============================================================================
+  C:\Users\Moosa\OneDrive\Desktop\lahore-lulc-carbon\outputs\figures\lulc_panel.png
+  C:\Users\Moosa\OneDrive\Desktop\lahore-lulc-carbon\outputs\figures\area_trajectory.png
+  C:\Users\Moosa\OneDrive\Desktop\lahore-lulc-carbon\outputs\figures\carbon_trajectory.png
+
+  C:\Users\Moosa\OneDrive\Desktop\lahore-lulc-carbon\outputs\summary.json
+
+==============================================================================
+DONE
+==============================================================================
